@@ -511,7 +511,8 @@ setMyId(profile.user.id || profile.user._id || "");
                         </Link>
 
                         {/* Super Admin */}
-                        {role === "SUPER_ADMIN" && (
+                        {role === "SUPER_ADMIN" &&
+                          !["RESOLVED", "CLOSED"].includes(complaint.status) && (
                           <select
                             defaultValue=""
                             onChange={(e) => {
