@@ -364,9 +364,9 @@ setMyId(profile.user.id || profile.user._id || "");
   if (loading) {
     return <PageSkeleton />;
   }
-  const assignedToMe = myId
-    ? complaints.filter((c) => c.assignedOfficer?._id === myId)
-    : complaints;
+  const assignedToMe = complaints.filter(
+    (c) => myId && c.assignedOfficer?._id === myId
+  );
 
   const visibleComplaints =
     role === "OFFICER" && tab === "ASSIGNED" ? assignedToMe : complaints;
@@ -385,7 +385,7 @@ setMyId(profile.user.id || profile.user._id || "");
           {role === "CITIZEN"
             ? "Track your submitted complaints and their status."
             : role === "OFFICER"
-            ? "View complaints assigned to your department."
+            ? "omplaints assigned to your department."
             : "View and manage all citizen complaints."}
         </p>
       </header>
@@ -538,9 +538,8 @@ setMyId(profile.user.id || profile.user._id || "");
                         )}
 
                         {/* Officer */}
-                      {role === "OFFICER" &&
-  (!myId ||
-    complaint.assignedOfficer?._id === myId) && (
+                      {role === "OFFICER" && myId &&
+                        complaint.assignedOfficer?._id === myId && (
                           <select
                             value={complaint.status}
                             onChange={(e) =>

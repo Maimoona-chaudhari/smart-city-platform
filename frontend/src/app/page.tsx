@@ -323,7 +323,7 @@ export default function Home() {
   const [myComplaints, setMyComplaints] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [departmentComplaints, setDepartmentComplaints] = useState<any[]>([]);
-  const [assignedComplaints, setAssignedComplaints] = useState<any[]>([]);
+  const [myId, setMyId] = useState("");
   const [data, setData] = useState<{
     complaints: any[];
     emergencies: unknown[];
@@ -376,6 +376,7 @@ export default function Home() {
         console.log("PROFILE USER:", profile);
         setRole(profile.user.role);
         setName(profile.user.name);
+        setMyId(profile.user.id || profile.user._id || "");
 
         if (profile.user.role === "SUPER_ADMIN") {
           const headers = {
@@ -448,16 +449,6 @@ export default function Home() {
       })
       .catch((error) => console.error(error));
 
-    fetch("http://localhost:5000/api/complaints/assigned", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setAssignedComplaints(result.complaints || []);
-      })
-      .catch((error) => console.error(error));
   }, []);
 
   /* ----- CITIZEN ----- */
@@ -950,6 +941,19 @@ export default function Home() {
 
   /* ----- OFFICER ----- */
   if (role === "OFFICER") {
+    console.log("MY ID:", myId);
+    console.log(
+      "DEPT COMPLAINTS:",
+      departmentComplaints.map((c) => ({
+        title: c.title,
+        officer: c.assignedOfficer,
+      }))
+    );
+
+    const assignedComplaints = departmentComplaints.filter(
+      (c) => myId && c.assignedOfficer?._id?.toString() === myId.toString()
+    );
+
     const inProgress = departmentComplaints.filter(
       (complaint) => complaint.status === "IN_PROGRESS"
     ).length;
